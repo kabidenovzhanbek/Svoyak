@@ -1,34 +1,1005 @@
-<!doctype html><html lang="ru"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1"><title>СВОЯК</title>
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>СВОЯК</title>
+
 <style>
-*{box-sizing:border-box}body{margin:0;background:#06131e;color:#fff;font-family:Arial,sans-serif}.wrap{max-width:1400px;margin:auto;padding:18px}h1{text-align:center;letter-spacing:6px;text-shadow:0 0 18px #20bfff}.top{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}.player{background:#102a58;border:2px solid #2a8ee8;border-radius:10px;padding:9px 14px;min-width:150px;text-align:center}.player input{width:100%;background:transparent;border:0;color:white;text-align:center;font-size:18px}.score{font-size:29px;font-weight:bold}.board{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;background:#0877ad;padding:4px;border:3px solid #8de8ff;border-radius:8px;margin-top:15px}.cat{background:#08134b;min-height:78px;display:flex;align-items:center;justify-content:center;text-align:center;font-weight:bold;padding:8px}.cell{min-height:90px;background:#173ea5;color:white;border:0;font-size:32px;font-weight:bold;cursor:pointer}.cell.used{visibility:hidden}.controls,.actions{display:flex;justify-content:center;gap:9px;flex-wrap:wrap;margin:15px}.btn,button{border:1px solid #4bcaff;background:#0b2e69;color:white;border-radius:8px;padding:11px 17px;font-weight:bold;cursor:pointer}.good{background:#08753d}.bad{background:#8b1731}.modal,.settings{position:fixed;inset:0;background:#020812ee;display:none;align-items:center;justify-content:center;padding:15px;z-index:10}.modal.show,.settings.show{display:flex}.card,.settingsCard{width:min(950px,96vw);max-height:92vh;overflow:auto;background:#0a1b45;border:3px solid #42d8ff;border-radius:18px;padding:24px}.card{text-align:center}.value{color:#7be8ff;font-size:24px}.question{font-size:30px;min-height:110px;display:flex;align-items:center;justify-content:center}.answer{display:none;background:#10295c;padding:14px;border-radius:8px;font-size:21px}.answer.show{display:block}.timer{color:#ffe47a;font-size:20px}.section{border:1px solid #286aa0;border-radius:10px;padding:12px;margin:10px 0}.row{display:flex;gap:8px;margin:7px 0;flex-wrap:wrap}.row input,.row select,.qbox input{background:#07162d;border:1px solid #327da8;color:#fff;border-radius:6px;padding:9px;flex:1;min-width:130px}.qgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}.qbox{background:#0b2043;padding:8px;border-radius:7px}.qbox b{color:#7be8ff}.qbox input{width:100%;margin-top:4px}@media(max-width:800px){.wrap{min-width:560px}.qgrid{grid-template-columns:1fr}}
-</style></head><body>
-<div class="wrap"><h1>С В О Я К</h1><div class="top" id="players"></div><div class="board" id="board"></div>
-<div class="controls"><button onclick="newGame()">↻ Новая игра</button><button onclick="openSettings()">⚙ Настройки</button><button onclick="document.documentElement.requestFullscreen?.()">⛶ Полный экран</button></div></div>
+*{box-sizing:border-box}
 
-<div class="modal" id="modal"><div class="card"><div class="value" id="mv"></div><div class="timer" id="tm"></div><div class="question" id="qq"></div><div class="answer" id="aa"></div><div class="actions"><button onclick="aa.classList.add('show')">Показать ответ</button><button class="good" onclick="result(1)">✓ Правильно</button><button class="bad" onclick="result(0)">✕ Неправильно</button><button onclick="closeModal()">Закрыть</button></div></div></div>
+body{
+  margin:0;
+  background:#06131e;
+  color:#fff;
+  font-family:Arial,sans-serif
+}
 
-<div class="settings" id="settings"><div class="settingsCard"><h2>⚙ Настройки игры</h2>
-<div class="section"><h3>Игроки</h3><div class="row">Количество: <select id="pc" onchange="drawPlayers()"><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select></div><div id="ps"></div></div>
-<div class="section"><h3>Категории, вопросы и ответы</h3><div id="cs"></div></div>
-<div class="actions"><button class="good" onclick="saveSettings()">✓ Сохранить</button><button onclick="closeSettings()">Отмена</button></div></div></div>
+.wrap{
+  max-width:1400px;
+  margin:auto;
+  padding:18px
+}
+
+h1{
+  text-align:center;
+  letter-spacing:6px;
+  text-shadow:0 0 18px #20bfff
+}
+
+.top{
+  display:flex;
+  gap:10px;
+  justify-content:center;
+  flex-wrap:wrap
+}
+
+.player{
+  background:#102a58;
+  border:2px solid #2a8ee8;
+  border-radius:10px;
+  padding:9px 14px;
+  min-width:150px;
+  text-align:center
+}
+
+.player input{
+  width:100%;
+  background:transparent;
+  border:0;
+  color:white;
+  text-align:center;
+  font-size:18px
+}
+
+.score{
+  font-size:29px;
+  font-weight:bold
+}
+
+.board{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:4px;
+  background:#0877ad;
+  padding:4px;
+  border:3px solid #8de8ff;
+  border-radius:8px;
+  margin-top:15px
+}
+
+.cat{
+  background:#08134b;
+  min-height:78px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  font-weight:bold;
+  padding:8px
+}
+
+.cell{
+  min-height:90px;
+  background:#173ea5;
+  color:white;
+  border:0;
+  font-size:32px;
+  font-weight:bold;
+  cursor:pointer
+}
+
+.cell.used{
+  visibility:hidden
+}
+
+.controls,.actions{
+  display:flex;
+  justify-content:center;
+  gap:9px;
+  flex-wrap:wrap;
+  margin:15px
+}
+
+.btn,button{
+  border:1px solid #4bcaff;
+  background:#0b2e69;
+  color:white;
+  border-radius:8px;
+  padding:11px 17px;
+  font-weight:bold;
+  cursor:pointer
+}
+
+.good{
+  background:#08753d
+}
+
+.bad{
+  background:#8b1731
+}
+
+.modal,.settings{
+  position:fixed;
+  inset:0;
+  background:#020812ee;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:15px;
+  z-index:10
+}
+
+.modal.show,.settings.show{
+  display:flex
+}
+
+.card,.settingsCard{
+  width:min(950px,96vw);
+  max-height:92vh;
+  overflow:auto;
+  background:#0a1b45;
+  border:3px solid #42d8ff;
+  border-radius:18px;
+  padding:24px
+}
+
+.card{
+  text-align:center
+}
+
+.value{
+  color:#7be8ff;
+  font-size:24px
+}
+
+.question{
+  font-size:30px;
+  min-height:110px;
+  display:flex;
+  align-items:center;
+  justify-content:center
+}
+
+.answer{
+  display:none;
+  background:#10295c;
+  padding:14px;
+  border-radius:8px;
+  font-size:21px
+}
+
+.answer.show{
+  display:block
+}
+
+.timer{
+  color:#ffe47a;
+  font-size:20px
+}
+
+.questionPhoto{
+  display:none;
+  margin:15px auto
+}
+
+.questionPhoto.show{
+  display:block
+}
+
+.questionPhoto img{
+  max-width:100%;
+  max-height:400px;
+  border-radius:12px;
+  object-fit:contain
+}
+
+.section{
+  border:1px solid #286aa0;
+  border-radius:10px;
+  padding:12px;
+  margin:10px 0
+}
+
+.row{
+  display:flex;
+  gap:8px;
+  margin:7px 0;
+  flex-wrap:wrap
+}
+
+.row input,
+.row select,
+.qbox input{
+  background:#07162d;
+  border:1px solid #327da8;
+  color:#fff;
+  border-radius:6px;
+  padding:9px;
+  flex:1;
+  min-width:130px
+}
+
+.qgrid{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:7px
+}
+
+.qbox{
+  background:#0b2043;
+  padding:8px;
+  border-radius:7px
+}
+
+.qbox b{
+  color:#7be8ff
+}
+
+.qbox input{
+  width:100%;
+  margin-top:4px
+}
+
+.photoButton{
+  width:100%;
+  margin-top:5px;
+  background:#173b68
+}
+
+.photoName{
+  font-size:11px;
+  color:#9edfff;
+  margin-top:4px;
+  word-break:break-word
+}
+
+@media(max-width:800px){
+  .wrap{
+    min-width:560px
+  }
+
+  .qgrid{
+    grid-template-columns:1fr
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="wrap">
+
+  <h1>С В О Я К</h1>
+
+  <div class="top" id="players"></div>
+
+  <div class="board" id="board"></div>
+
+  <div class="controls">
+    <button onclick="newGame()">↻ Новая игра</button>
+    <button onclick="openSettings()">⚙ Настройки</button>
+    <button onclick="document.documentElement.requestFullscreen?.()">⛶ Полный экран</button>
+  </div>
+
+</div>
+
+
+<!-- ОКНО ВОПРОСА -->
+
+<div class="modal" id="modal">
+
+  <div class="card">
+
+    <div class="value" id="mv"></div>
+
+    <div class="timer" id="tm"></div>
+
+    <div class="questionPhoto" id="questionPhoto">
+      <img id="questionImage">
+    </div>
+
+    <div class="question" id="qq"></div>
+
+    <div class="answer" id="aa"></div>
+
+    <div class="actions">
+
+      <button onclick="aa.classList.add('show')">
+        Показать ответ
+      </button>
+
+      <button class="good" onclick="result(1)">
+        ✓ Правильно
+      </button>
+
+      <button class="bad" onclick="result(0)">
+        ✕ Неправильно
+      </button>
+
+      <button onclick="closeModal()">
+        Закрыть
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- НАСТРОЙКИ -->
+
+<div class="settings" id="settings">
+
+  <div class="settingsCard">
+
+    <h2>⚙ Настройки игры</h2>
+
+
+    <div class="section">
+
+      <h3>Игроки</h3>
+
+      <div class="row">
+
+        Количество:
+
+        <select id="pc" onchange="drawPlayers()">
+
+          <option>2</option>
+          <option>3</option>
+          <option>4</option>
+          <option>5</option>
+          <option>6</option>
+
+        </select>
+
+      </div>
+
+      <div id="ps"></div>
+
+    </div>
+
+
+    <div class="section">
+
+      <h3>Категории, вопросы и ответы</h3>
+
+      <div id="cs"></div>
+
+    </div>
+
+
+    <div class="actions">
+
+      <button class="good" onclick="saveSettings()">
+        ✓ Сохранить
+      </button>
+
+      <button onclick="closeSettings()">
+        Отмена
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
 
 <script>
-const V=[200,400,600,800,1000],DEF=["Перелез или нет?","Цитаты женских пабликов","СТС","Двуличные актёры","Что по русскому задали?"];
-let D=JSON.parse(localStorage.getItem("svoyak-config")||"null");
-if(!D){D={players:["Игрок 1","Игрок 2","Игрок 3"],scores:[0,0,0],cats:[...DEF],qs:DEF.map(c=>V.map(v=>({q:"Вопрос "+v+" категории «"+c+"»",a:"Ответ на вопрос "+v})))}}
-let cur=null,timer=null;
-const E=s=>String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
-function save(){localStorage.setItem("svoyak-config",JSON.stringify(D))}
-function render(){players.innerHTML=D.players.map((p,i)=>`<div class="player"><input value="${E(p)}" onchange="D.players[${i}]=this.value;save()"><div class="score">${D.scores[i]}</div></div>`).join("");board.innerHTML=D.cats.map(c=>`<div class="cat">${E(c)}</div>`).join("");V.forEach((v,vi)=>D.cats.forEach((c,ci)=>{let u=localStorage.getItem("used-"+ci+"-"+vi);board.innerHTML+=`<button class="cell ${u?'used':''}" ${u?'disabled':''} onclick="openQ(${ci},${vi})">${v}</button>`}))}
-function openQ(ci,vi){cur={ci,vi,v:V[vi]};mv.textContent=D.cats[ci]+" • "+V[vi];qq.textContent=D.qs[ci][vi].q;aa.textContent=D.qs[ci][vi].a;aa.classList.remove("show");modal.classList.add("show");let s=30;tm.textContent="Время: "+s+" сек.";clearInterval(timer);timer=setInterval(()=>{tm.textContent="Время: "+(--s)+" сек.";if(s<=0)clearInterval(timer)},1000)}
-function result(ok){let n=+prompt("Номер игрока (1-"+D.players.length+")");let i=n-1;if(i>=0&&i<D.players.length){D.scores[i]+=ok?cur.v:-cur.v;save()}localStorage.setItem("used-"+cur.ci+"-"+cur.vi,"1");closeModal();render()}
-function closeModal(){clearInterval(timer);modal.classList.remove("show")}
-function newGame(){if(confirm("Начать новую игру?")){Object.keys(localStorage).filter(k=>k.startsWith("used-")).forEach(k=>localStorage.removeItem(k));D.scores=D.players.map(()=>0);save();render()}}
-function openSettings(){pc.value=D.players.length;drawPlayers();drawCats();settings.classList.add("show")}
-function closeSettings(){settings.classList.remove("show")}
-function drawPlayers(){let n=+pc.value;ps.innerHTML=Array.from({length:n},(_,i)=>`<div class="row"><input id="pn${i}" value="${E(D.players[i]||"Игрок "+(i+1))}"></div>`).join("")}
-function drawCats(){cs.innerHTML=D.cats.map((c,ci)=>`<div class="section"><div class="row"><input id="cn${ci}" value="${E(c)}"></div><div class="qgrid">${V.map((v,vi)=>`<div class="qbox"><b>${v}</b><input id="q${ci}_${vi}" value="${E(D.qs[ci][vi].q)}" placeholder="Вопрос"><input id="a${ci}_${vi}" value="${E(D.qs[ci][vi].a)}" placeholder="Ответ"></div>`).join("")}</div></div>`).join("")}
-function saveSettings(){let n=+pc.value;D.players=Array.from({length:n},(_,i)=>document.getElementById("pn"+i).value||"Игрок "+(i+1));D.scores=D.players.map(()=>0);D.cats=D.cats.map((_,ci)=>document.getElementById("cn"+ci).value||"Категория "+(ci+1));D.qs=D.qs.map((r,ci)=>r.map((_,vi)=>({q:document.getElementById("q"+ci+"_"+vi).value||"Вопрос",a:document.getElementById("a"+ci+"_"+vi).value||"Ответ"})));Object.keys(localStorage).filter(k=>k.startsWith("used-")).forEach(k=>localStorage.removeItem(k));save();render();closeSettings()}
+
+const V = [200,400,600,800,1000];
+
+const DEF = [
+  "Перелез или нет?",
+  "Цитаты женских пабликов",
+  "СТС",
+  "Двуличные актёры",
+  "Что по русскому задали?"
+];
+
+
+let D = JSON.parse(
+  localStorage.getItem("svoyak-config") || "null"
+);
+
+
+if(!D){
+
+  D = {
+
+    players:[
+      "Игрок 1",
+      "Игрок 2",
+      "Игрок 3"
+    ],
+
+    scores:[
+      0,
+      0,
+      0
+    ],
+
+    cats:[...DEF],
+
+    qs:DEF.map(c =>
+      V.map(v => ({
+        q:"Вопрос "+v+" категории «"+c+"»",
+        a:"Ответ на вопрос "+v,
+        img:""
+      }))
+    )
+
+  };
+
+}
+
+
+let cur = null;
+let timer = null;
+
+
+const E = s => String(s).replace(
+  /[&<>"']/g,
+  m => ({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#39;"
+  }[m])
+);
+
+
+function save(){
+
+  localStorage.setItem(
+    "svoyak-config",
+    JSON.stringify(D)
+  );
+
+}
+
+
+/* ---------------- ИГРОКИ И ТАБЛО ---------------- */
+
+function render(){
+
+  players.innerHTML = D.players.map(
+    (p,i) => `
+
+      <div class="player">
+
+        <input
+          value="${E(p)}"
+          onchange="D.players[${i}]=this.value;save()"
+        >
+
+        <div class="score">
+          ${D.scores[i]}
+        </div>
+
+      </div>
+
+    `
+  ).join("");
+
+
+  board.innerHTML = D.cats.map(
+    c => `
+      <div class="cat">
+        ${E(c)}
+      </div>
+    `
+  ).join("");
+
+
+  V.forEach((v,vi) => {
+
+    D.cats.forEach((c,ci) => {
+
+      let u = localStorage.getItem(
+        "used-"+ci+"-"+vi
+      );
+
+      board.innerHTML += `
+
+        <button
+          class="cell ${u?'used':''}"
+          ${u?'disabled':''}
+          onclick="openQ(${ci},${vi})"
+        >
+          ${v}
+        </button>
+
+      `;
+
+    });
+
+  });
+
+}
+
+
+/* ---------------- ОТКРЫТИЕ ВОПРОСА ---------------- */
+
+function openQ(ci,vi){
+
+  cur = {
+    ci,
+    vi,
+    v:V[vi]
+  };
+
+
+  let data = D.qs[ci][vi];
+
+
+  mv.textContent =
+    D.cats[ci] + " • " + V[vi];
+
+
+  qq.textContent =
+    data.q;
+
+
+  aa.textContent =
+    data.a;
+
+
+  aa.classList.remove("show");
+
+
+  /* ФОТО */
+
+  if(data.img){
+
+    questionImage.src = data.img;
+
+    questionPhoto.classList.add("show");
+
+  }else{
+
+    questionImage.src = "";
+
+    questionPhoto.classList.remove("show");
+
+  }
+
+
+  modal.classList.add("show");
+
+
+  let s = 30;
+
+  tm.textContent =
+    "Время: " + s + " сек.";
+
+
+  clearInterval(timer);
+
+
+  timer = setInterval(() => {
+
+    s--;
+
+    tm.textContent =
+      "Время: " + s + " сек.";
+
+
+    if(s <= 0){
+
+      clearInterval(timer);
+
+    }
+
+  },1000);
+
+}
+
+
+/* ---------------- РЕЗУЛЬТАТ ---------------- */
+
+function result(ok){
+
+  let n = +prompt(
+    "Номер игрока (1-"+D.players.length+")"
+  );
+
+
+  let i = n - 1;
+
+
+  if(
+    i >= 0 &&
+    i < D.players.length
+  ){
+
+    D.scores[i] +=
+      ok ? cur.v : -cur.v;
+
+    save();
+
+  }
+
+
+  localStorage.setItem(
+    "used-"+cur.ci+"-"+cur.vi,
+    "1"
+  );
+
+
+  closeModal();
+
+  render();
+
+}
+
+
+/* ---------------- ЗАКРЫТЬ ВОПРОС ---------------- */
+
+function closeModal(){
+
+  clearInterval(timer);
+
+  modal.classList.remove("show");
+
+}
+
+
+/* ---------------- НОВАЯ ИГРА ---------------- */
+
+function newGame(){
+
+  if(confirm("Начать новую игру?")){
+
+    Object.keys(localStorage)
+      .filter(k => k.startsWith("used-"))
+      .forEach(k =>
+        localStorage.removeItem(k)
+      );
+
+
+    D.scores =
+      D.players.map(() => 0);
+
+
+    save();
+
+    render();
+
+  }
+
+}
+
+
+/* ---------------- НАСТРОЙКИ ---------------- */
+
+function openSettings(){
+
+  pc.value =
+    D.players.length;
+
+  drawPlayers();
+
+  drawCats();
+
+  settings.classList.add("show");
+
+}
+
+
+function closeSettings(){
+
+  settings.classList.remove("show");
+
+}
+
+
+/* ---------------- ИГРОКИ В НАСТРОЙКАХ ---------------- */
+
+function drawPlayers(){
+
+  let n = +pc.value;
+
+
+  ps.innerHTML =
+    Array.from(
+      {length:n},
+      (_,i) => `
+
+        <div class="row">
+
+          <input
+            id="pn${i}"
+            value="${E(
+              D.players[i] ||
+              "Игрок "+(i+1)
+            )}"
+          >
+
+        </div>
+
+      `
+    ).join("");
+
+}
+
+
+/* ---------------- КАТЕГОРИИ ---------------- */
+
+function drawCats(){
+
+  cs.innerHTML =
+    D.cats.map((c,ci) => {
+
+      return `
+
+        <div class="section">
+
+          <div class="row">
+
+            <input
+              id="cn${ci}"
+              value="${E(c)}"
+              placeholder="Название категории"
+            >
+
+          </div>
+
+
+          <div class="qgrid">
+
+            ${V.map((v,vi) => {
+
+              let data =
+                D.qs[ci][vi] || {
+                  q:"",
+                  a:"",
+                  img:""
+                };
+
+
+              return `
+
+                <div class="qbox">
+
+                  <b>${v}</b>
+
+
+                  <input
+                    id="q${ci}_${vi}"
+                    value="${E(data.q || "")}"
+                    placeholder="Вопрос"
+                  >
+
+
+                  <input
+                    id="a${ci}_${vi}"
+                    value="${E(data.a || "")}"
+                    placeholder="Ответ"
+                  >
+
+
+                  <input
+                    type="file"
+                    id="img${ci}_${vi}"
+                    accept="image/*"
+                    style="display:none"
+                    onchange="showPhotoName(${ci},${vi})"
+                  >
+
+
+                  <button
+                    type="button"
+                    class="photoButton"
+                    onclick="document.getElementById('img${ci}_${vi}').click()"
+                  >
+                    📷 Выбрать фото
+                  </button>
+
+
+                  <div
+                    class="photoName"
+                    id="photoName${ci}_${vi}"
+                  >
+                    ${data.img ? "Фото уже загружено ✓" : "Фото не выбрано"}
+                  </div>
+
+                </div>
+
+              `;
+
+            }).join("")}
+
+          </div>
+
+        </div>
+
+      `;
+
+    }).join("");
+
+}
+
+
+/* ---------------- НАЗВАНИЕ ФОТО ---------------- */
+
+function showPhotoName(ci,vi){
+
+  let file =
+    document.getElementById(
+      `img${ci}_${vi}`
+    ).files[0];
+
+
+  if(file){
+
+    document.getElementById(
+      `photoName${ci}_${vi}`
+    ).textContent =
+      "Выбрано: " + file.name;
+
+  }
+
+}
+
+
+/* ---------------- ФОТО В BASE64 ---------------- */
+
+function fileToBase64(file){
+
+  return new Promise(
+    (resolve,reject) => {
+
+      const reader =
+        new FileReader();
+
+
+      reader.onload =
+        () => resolve(reader.result);
+
+
+      reader.onerror =
+        reject;
+
+
+      reader.readAsDataURL(file);
+
+    }
+  );
+
+}
+
+
+/* ---------------- СОХРАНЕНИЕ НАСТРОЕК ---------------- */
+
+async function saveSettings(){
+
+  let n = +pc.value;
+
+
+  /* Имена игроков */
+
+  D.players =
+    Array.from(
+      {length:n},
+      (_,i) =>
+        document.getElementById(
+          "pn"+i
+        ).value ||
+        "Игрок "+(i+1)
+    );
+
+
+  D.scores =
+    D.players.map(() => 0);
+
+
+  /* Категории */
+
+  D.cats =
+    D.cats.map(
+      (_,ci) =>
+        document.getElementById(
+          "cn"+ci
+        ).value ||
+        "Категория "+(ci+1)
+    );
+
+
+  /* Вопросы */
+
+  for(
+    let ci=0;
+    ci<D.cats.length;
+    ci++
+  ){
+
+    for(
+      let vi=0;
+      vi<V.length;
+      vi++
+    ){
+
+      let old =
+        D.qs[ci][vi] || {};
+
+
+      let image =
+        old.img || "";
+
+
+      let fileInput =
+        document.getElementById(
+          `img${ci}_${vi}`
+        );
+
+
+      if(
+        fileInput &&
+        fileInput.files &&
+        fileInput.files[0]
+      ){
+
+        image =
+          await fileToBase64(
+            fileInput.files[0]
+          );
+
+      }
+
+
+      D.qs[ci][vi] = {
+
+        q:
+          document.getElementById(
+            `q${ci}_${vi}`
+          ).value ||
+          "Вопрос",
+
+        a:
+          document.getElementById(
+            `a${ci}_${vi}`
+          ).value ||
+          "Ответ",
+
+        img:image
+
+      };
+
+    }
+
+  }
+
+
+  /* Сбрасываем использованные вопросы */
+
+  Object.keys(localStorage)
+    .filter(k =>
+      k.startsWith("used-")
+    )
+    .forEach(k =>
+      localStorage.removeItem(k)
+    );
+
+
+  save();
+
+  render();
+
+  closeSettings();
+
+}
+
+
+/* ---------------- ЗАПУСК ---------------- */
+
 render();
-</script></body></html>
+
+</script>
+
+</body>
+</html>
